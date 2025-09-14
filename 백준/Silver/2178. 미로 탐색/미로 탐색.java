@@ -1,4 +1,3 @@
-import java.awt.Point;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Queue;
@@ -7,17 +6,7 @@ import java.util.Scanner;
 public class Main {
 	public static int cnt = 0;
 	public static int[][] arr;
-	public static Queue<Point> q;
-	//좌표 저장용 클래스 
-    static class Point {
-        int r, c;
-        int dist = 0;
- 
-        public Point(int r, int c) {
-            this.r = r;
-            this.c = c;
-        }
-    }
+	public static Queue<int[]> q;
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
 		
@@ -33,47 +22,40 @@ public class Main {
 		}
 		
 		q = new ArrayDeque<>();
-		Point start = new Point(0,0);
-		start.dist = 1;
-		bfs(start);
+		bfs(new int[] {0, 0, 1});
 		
 		System.out.println(cnt);
 		
 		sc.close();
 	}
 	
-	public static void bfs(Point start) {
+	public static void bfs(int[] start) {
 		q.add(start);
-		arr[start.r][start.r] = 0;
 		
 		// 상 하 좌 우 
 		int[] dr = {-1, 1, 0, 0};
 		int[] dc = {0, 0, -1, 1};
 		while (!q.isEmpty()) {
-			Point curr = q.poll();
+			int[] curr = q.poll();
 			
 			// 도착하면 끝
-			if (curr.r == arr.length-1 && curr.c == arr[curr.r].length-1) {
-				cnt = curr.dist;
+			if (curr[0] == arr.length-1 && curr[1] == arr[curr[0]].length-1) {
+				cnt = curr[2];
 				break;
 			}
 			
 			for (int i=0; i<4; i++) {
-				int nr = curr.r + dr[i];
-				int nc = curr.c + dc[i];
-				
+				int nr = curr[0] + dr[i];
+				int nc = curr[1] + dc[i];
+			
 				if (nr<0 || nr>=arr.length || nc<0 || nc>=arr[nr].length)
 					continue;
 				
-				if (arr[nr][nc] == 0)
+				if (arr[nr][nc] == 0) 
 					continue;
 				
-				Point next = new Point(nr, nc);
-				next.dist += (curr.dist + 1);
-				q.add(next);
-				arr[nr][nc] = 0;	
-				
-//				System.out.println(Arrays.deepToString(arr));
+				arr[nr][nc] = 0; // 방문 처리 
+				q.add(new int[] {nr, nc, curr[2]+1 });	// 거리 정보 저장	
 			}
 		}
 	}
